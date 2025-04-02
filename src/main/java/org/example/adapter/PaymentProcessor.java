@@ -1,9 +1,5 @@
 package org.example.adapter;
 
-public class PaymentProcessor {
-    public void processPayment(double amount) {
-
-    }
-
-
+public interface PaymentProcessor {
+    void processarPagamento(double valor);
 }

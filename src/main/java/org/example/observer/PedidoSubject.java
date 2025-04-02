@@ -1,22 +1,11 @@
-package org.example.adapter;
-
-import org.example.observer.ClienteObserver;
+package org.example.observer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PedidoSubject {
-    private String status;
     private List<ClienteObserver> observers = new ArrayList<>();
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-        notificarTodosObservers();
-    }
+    private String status;
 
     public void adicionarObserver(ClienteObserver observer) {
         observers.add(observer);
@@ -26,9 +15,14 @@ public class PedidoSubject {
         observers.remove(observer);
     }
 
-    private void notificarTodosObservers() {
+    public void setStatus(String status) {
+        this.status = status;
+        notificarObservers();
+    }
+
+    private void notificarObservers() {
         for (ClienteObserver observer : observers) {
-            observer.atualizar(this);
+            observer.atualizar(status);
         }
     }
 }
