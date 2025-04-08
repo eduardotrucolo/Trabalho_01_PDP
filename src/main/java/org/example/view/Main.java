@@ -20,51 +20,63 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+
+        // Factory e service para produtos
         ProductFactory factory = new ProductFactory();
         ProdutoService produtoService = new ProdutoService();
+
+        // Subject do Observer (pedido)
         PedidoSubject pedidoSubject = new PedidoSubject();
 
         System.out.println("Digite seu nome:");
         String nomeCliente = scanner.nextLine();
+
+        // Criação do observador (cliente)
         Cliente cliente = new Cliente(nomeCliente);
-        pedidoSubject.adicionarObserver(cliente);
+        pedidoSubject.adicionarObserver(cliente); // adiciona cliente como observador
 
-        Produto p1 = factory.criarProduto("Produto A", 100.00);
-        Produto p2 = factory.criarProduto("Produto B", 50.00);
+        // Criação de produtos usando Factory
+        Produto p1 = factory.criarProduto("Produto h", 100.00);
+        Produto p2 = factory.criarProduto("Produto k", 50.00);
 
-        // Salvar no banco
+        // Simula persistência dos produtos
         produtoService.salvarProduto(p1);
         produtoService.salvarProduto(p2);
 
+        // Criação de um pedido simples (com os dois produtos)
         Pedido pedidoSimples = new PedidoSimples(Arrays.asList(p1, p2));
 
-        // Adicionando embalagem para presente com Decorator
+        // Aplicação do Decorator: adiciona embalagem ao pedido
         Pedido pedidoComEmbalagem = new EmbalagemPresente(pedidoSimples);
 
+        // Exibe a descrição e o valor total (com o adicional da embalagem)
         System.out.println("Descrição: " + pedidoComEmbalagem.getDescricao());
         System.out.println("Total: " + pedidoComEmbalagem.getTotal());
 
-        // Atualizar status do pedido
+        // Observer: altera status e notifica o cliente
         pedidoSubject.setStatus("Em processamento");
 
-        // Escolher meio de pagamento
+        // Escolha do meio de pagamento
         System.out.println("Escolha o meio de pagamento (1 - PayPal):");
         int opcaoPagamento = scanner.nextInt();
 
         PaymentProcessor pagamento = null;
         if (opcaoPagamento == 1) {
+            // Adapter: adaptando PayPal para a interface PaymentProcessor
             pagamento = new PayPalAdapter(new PayPal());
         }
 
+        // Processamento do pagamento
         if (pagamento != null) {
             pagamento.processarPagamento(pedidoComEmbalagem.getTotal());
         }
 
-        // Simular administração
-        scanner.nextLine(); // Limpar buffer
+        // Proxy: controla acesso a ações administrativas
+        scanner.nextLine(); // Limpa o buffer do scanner
         System.out.println("Digite a credencial de admin:");
         String credencial = scanner.nextLine();
+
         AdminProxy admin = new AdminProxy(credencial);
-        admin.executarAcaoAdministrativa();
+        admin.executarAcaoAdministrativa(); // executa a ação se credencial for válida
     }
 }
